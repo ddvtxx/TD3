@@ -19,7 +19,7 @@ for i_loop in range(10):
     numSenario = 4
     linkmode = 'uplink'
     ru_mode = 3
-    episode = 1
+    episode = 600
     max_iteration = 200
     test_env = env.environment_base(numAPuser,numRU,linkmode,ru_mode)
 
