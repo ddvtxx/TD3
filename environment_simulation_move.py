@@ -224,6 +224,8 @@ class environment_base:
         #(ap,ap,user,ru)
         return self.channel_gain
     
+    def change_RU_mode(self, mode):
+        self.RU_mode = mode
 
     def n_AP_RU_mapper(self):
         # Mode 1: Each user is assigned to a distinct RU without overlap.
@@ -407,19 +409,20 @@ class environment_base:
     def calculate_4_cells(self,ru_mapper_nAP):
 
         self.signal_strength = np.array(list(map(lambda x:self.channel_gain[x][x] * ru_mapper_nAP[x],range(self.channel_gain.shape[0]))))
-        # #get how many ru do a certain user have
-        # ru_per_user = ru_mapper_nAP.sum(axis=2) 
-        # ru_per_user = ru_per_user.reshape(self.numAP, self.numUserAP ,1 )
-        # ru_per_user = np.tile(ru_per_user, (1,1,self.numRU))
-        # ru_per_user_picked = ru_per_user == 0
-        # ru_per_user = ru_per_user + ru_per_user_picked.astype(int)
+        #get how many ru do a certain user have
+        # self.ru_per_user = ru_mapper_nAP.sum(axis=2) 
+        # self.ru_per_user = self.ru_per_user.reshape(self.numAP, self.numUserAP ,1 )
+        # self.ru_per_user = np.tile(self.ru_per_user, (1,1,self.numRU))
+        # ru_per_user_picked = self.ru_per_user == 0
+        # self.ru_per_user = self.ru_per_user + ru_per_user_picked.astype(int)
+
         # #allocate signal power averagely due to 
         # self.signal_strength = self.signal_strength / ru_per_user
         power_allocation = self.water_filling(self.signal_strength, 1)
         self.signal_strength = self.signal_strength*power_allocation
         
         if self.Linkmode == 'uplink':
-            sinr_uplink = np.zeros((self.numAP,self.numUserAP,self.numRU))
+            self.sinr_uplink = np.zeros((self.numAP,self.numUserAP,self.numRU))
             self.n_AP_n_user_bitrate = np.zeros((self.numAP,self.numUserAP,self.numRU))
             for i in range(self.numAP):
                 interference = np.zeros((self.channel_gain.shape[2:]))
@@ -431,13 +434,21 @@ class environment_base:
                         interference_uplink[j] = interference.repeat(self.channel_gain.shape[2],axis=0)
                 interference_uplink = interference_uplink.sum(axis=0)
                 #calculate the SINR
-                sinr_uplink[i] = self.signal_strength[i]/(self.N0 + interference_uplink)
-                self.n_AP_n_user_bitrate[i] = self.bwRU * np.log2(1 + sinr_uplink[i])
+                self.sinr_uplink[i] = self.signal_strength[i]/(self.N0 + interference_uplink)
+                self.n_AP_n_user_bitrate[i] = self.bwRU * np.log2(1 + self.sinr_uplink[i])
             self.n_AP_bitrate = self.n_AP_n_user_bitrate.sum(axis=2).sum(axis=1)
             self.system_bitrate = self.n_AP_bitrate.sum(axis=0)
                     
         return self.system_bitrate
+    
+    def get_n_AP_n_user_bitrate(self):
+        return self.n_AP_bitrate
+    
+    def get_sinr(self):
+        return self.sinr_uplink
 
+    def get_ru_per_user(self):
+        return self.ru_per_user
 
 
 
