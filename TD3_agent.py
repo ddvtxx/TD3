@@ -50,6 +50,11 @@ class TD3:
         self.critic_loss_show = 0
         self.actor_loss_show = 0
 
+    def get_critic_loss(self):
+        return self.critic_loss_show
+    
+    def get_actor_loss(self):
+        return self.critic_loss_show
 
     def update_network_parameters(self, tau=None):
         if tau is None:
