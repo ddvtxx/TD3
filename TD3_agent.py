@@ -21,21 +21,21 @@ class TD3:
         self.update_actor_interval = update_actor_interval
         self.total_train = 0
 
-        self.actor = ActorNetwork(alpha=alpha, state_dim=numSenario*numAPuser*numRU, action_dim=numAPuser*numRU,
+        self.actor = ActorNetwork(alpha=alpha, state_dim=numSenario*numAPuser*numRU, action_dim=numSenario*numAPuser*numRU,
                                   fc1_dim=actor_fc1_dim, fc2_dim=actor_fc2_dim,
                                   fc3_dim=actor_fc3_dim, fc4_dim=actor_fc4_dim)   
 
-        self.target_actor = ActorNetwork(alpha=alpha, state_dim=numSenario*numAPuser*numRU, action_dim=numAPuser*numRU,
+        self.target_actor = ActorNetwork(alpha=alpha, state_dim=numSenario*numAPuser*numRU, action_dim=numSenario*numAPuser*numRU,
                                          fc1_dim=actor_fc1_dim, fc2_dim=actor_fc2_dim,
                                          fc3_dim=actor_fc3_dim, fc4_dim=actor_fc4_dim)
 
-        self.critic = CriticNetwork(beta=beta, state_dim=numSenario*numAPuser*numRU, action_dim=numAPuser*numRU,
+        self.critic = CriticNetwork(beta=beta, state_dim=numSenario*numAPuser*numRU, action_dim=numSenario*numAPuser*numRU,
                                     q1_fc1_dim=critic_fc1_dim, q1_fc2_dim=critic_fc2_dim,
                                     q1_fc3_dim=critic_fc3_dim, q1_fc4_dim=critic_fc4_dim,
                                     q2_fc1_dim=critic_fc1_dim, q2_fc2_dim=critic_fc2_dim,
                                     q2_fc3_dim=critic_fc3_dim, q2_fc4_dim=critic_fc4_dim)
 
-        self.target_critic = CriticNetwork(beta=beta, state_dim=numSenario*numAPuser*numRU, action_dim=numAPuser*numRU,
+        self.target_critic = CriticNetwork(beta=beta, state_dim=numSenario*numAPuser*numRU, action_dim=numSenario*numAPuser*numRU,
                                            q1_fc1_dim=critic_fc1_dim, q1_fc2_dim=critic_fc2_dim,
                                            q1_fc3_dim=critic_fc3_dim, q1_fc4_dim=critic_fc4_dim,
                                            q2_fc1_dim=critic_fc1_dim, q2_fc2_dim=critic_fc2_dim,

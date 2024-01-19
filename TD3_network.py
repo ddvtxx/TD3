@@ -22,7 +22,7 @@ class ActorNetwork(nn.Module):
     def __init__(self, alpha, state_dim, action_dim, 
                  fc1_dim, fc2_dim, fc3_dim, fc4_dim):
         super(ActorNetwork, self).__init__()
-        self.input_layer = nn.Flatten(1,3) #将矩阵展开  (bacthsize,4,5,8)展开为(bacthsize,160)
+        self.input_layer = nn.Flatten() #将矩阵展开  (bacthsize,4,5,8)展开为(bacthsize,160)
         self.fc1 = nn.Linear(state_dim, fc1_dim) ## 
         self.ln1 = nn.LayerNorm(fc1_dim)
         self.fc2 = nn.Linear(fc1_dim, fc2_dim)
@@ -43,7 +43,7 @@ class ActorNetwork(nn.Module):
         x = T.relu(self.fc3(x))
         x = T.relu(self.fc4(x))
         action = F.gumbel_softmax(self.action(x), tau=1, hard=False, eps = 1e-5) 
-        action = T.reshape(action,(state.shape[0],state.shape[2],state.shape[3]))
+        # action = T.reshape(action,(state.shape[0],state.shape[2],state.shape[3]))
         return action
 
     def save_checkpoint(self, checkpoint_file):
@@ -58,7 +58,7 @@ class CriticNetwork(nn.Module):
                  q1_fc1_dim, q1_fc2_dim, q1_fc3_dim, q1_fc4_dim,
                  q2_fc1_dim, q2_fc2_dim, q2_fc3_dim, q2_fc4_dim):
         super(CriticNetwork, self).__init__()
-        self.input_layer = nn.Flatten(1,3) #将矩阵展开
+        self.input_layer = nn.Flatten(1,-1) #将矩阵展开
         # Q1 architecture
         self.q1_fc1 = nn.Linear(state_dim*2, q1_fc1_dim) # (1,4,5,8)展开为(1,160)
         self.q1_ln1 = nn.LayerNorm(q1_fc1_dim)
@@ -84,10 +84,9 @@ class CriticNetwork(nn.Module):
 
     def forward(self, state, action):  
 ######### action 与 state 组合以后同时输入网络 #########        
-        action = T.unsqueeze(action,1) ## 从(bacthsize,5,8)转化为(bacthsize,1,5,8)
-        action = action.expand(state.shape) ## (bacthsize,1,5,8)转化为(bacthsize,4,5,8)
-        ###  state = T.unsqueeze(state,0) ## 将(bacthsize,4,5,8)转化为(1,bacthsize,4,5,8)
-        state_action = T.cat((state,action),1) ## 状态与动作拼接 生成 (bacthsize,4*2,5,8)
+        state_shape = state.shape
+        action = action.reshape((state_shape[0],state_shape[1],state_shape[2],state_shape[3]))
+        state_action = T.cat((state,action),2)
         x = T.relu(self.q1_ln1(self.q1_fc1(self.input_layer(state_action))))
         x = T.relu(self.q1_ln2(self.q1_fc2(x)))
         x = T.relu(self.q1_fc3(x))
@@ -102,9 +101,9 @@ class CriticNetwork(nn.Module):
         return q1,q2
         
     def AQ(self, state, action):
-        action = T.unsqueeze(action,1) 
-        action = action.expand(state.shape) 
-        state_action = T.cat((state,action),1)    
+        state_shape = state.shape
+        action = action.reshape((state_shape[0],state_shape[1],state_shape[2],state_shape[3]))
+        state_action = T.cat((state,action),2)  
         x = T.relu(self.q1_ln1(self.q1_fc1(self.input_layer(state_action))))
         x = T.relu(self.q1_ln2(self.q1_fc2(x)))
         x = T.relu(self.q1_fc3(x))
