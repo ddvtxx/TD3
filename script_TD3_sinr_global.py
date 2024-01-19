@@ -53,36 +53,14 @@ for i_loop in range(6):
             action_pre = TD3_agent.choose_action(observation,train=False)
             action_pre = action_pre.reshape(numSenario,numAPuser,numRU)
             action_0 = np.zeros_like(action_pre)
+            user_resource_count = np.zeros((action_pre.shape[0], action_pre.shape[1]), dtype=int)
             for m in range(numSenario):
-                user_list = [1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,0,0,0]
-                for k in range(numRU): 
-                    max_key = np.argmax(action_pre[m,:,k])
-                    if numAPuser <=2:
-                        if max_key in user_list:
-                            action_0[m,max_key,k] = 1
-                            user_list.remove(max_key)   
-                    else:       
-                        if max_key in user_list:
-                            action_0[m,max_key,k] = 1
-                            user_list.remove(max_key)
-                        else:
-                            while max_key not in user_list and action_pre[m,max_key,k]!=0:
-                                action_pre[m,max_key, :] = 0
-                                max_key = np.argmax(action_pre[m,:,k])
-                            action_0[m,max_key, k] = 1
-                            user_list.remove(max_key)
-                        # action_pre[max_key,:] = 0
-                        # max_key = np.argmax(action_pre[:,k])
-                        # if max_key not in user_list:
-                        #     action_pre[max_key,:] = 0
-                        #     max_key = np.argmax(action_pre[:,k])      
-                        #     user_list.remove(max_key)
-                        #     action_0[max_key,k] = 1
-                        # user_list.remove(max_key)
-                        # action_0[max_key,k] = 1
-            # action_1=action_0.reshape(1,numAPuser,numRU)
-            # AP123_RU_mapper = test_env.n_AP_RU_mapper()
-            # RU_mapper = np.vstack((AP123_RU_mapper,action_1))
+                for resource_index in range(action_pre.shape[2]):
+                    user_index = np.argmax(action_pre[m,:,resource_index])
+                    if user_resource_count[m,user_index] < 3:
+                        action_0[m,user_index,resource_index] = 1
+                        user_resource_count[m,user_index] += 1
+
             system_bitrate = test_env.calculate_4_cells(action_0)
             observation_ = test_env.get_sinr()
 
