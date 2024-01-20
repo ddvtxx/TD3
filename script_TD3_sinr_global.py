@@ -66,7 +66,7 @@ for i_loop in range(6):
             userinfo_ = test_env.senario_user_info(x_,y_)
             channel_gain_obs_ = test_env.channel_gain_calculate()
             done = False
-            TD3_agent.remember(observation, RU_mapper, reward, observation_, done)
+            TD3_agent.remember(observation, action_0, reward, observation_, done)
             TD3_agent.learn()
             actor_loss = TD3_agent.get_actor_loss()
             critic_loss = TD3_agent.get_actor_loss()
