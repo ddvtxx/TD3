@@ -44,6 +44,10 @@ for i_loop in range(6):
         x,y = x_init,y_init
         userinfo = test_env.senario_user_info(x,y)
         channel_gain_obs = test_env.channel_gain_calculate()
+        test_env.change_RU_mode(4)
+        general_mapper = test_env.n_AP_RU_mapper()
+        general_bitrate = test_env.calculate_4_cells(general_mapper)
+        test_env.change_RU_mode(3)
         observation = test_env.get_sinr()
         for i_iteration in range(max_iteration):
             action_pre = TD3_agent.choose_action(observation,train=False)
