@@ -118,3 +118,16 @@ for i_loop in range(6):
                 reward_ave_history.append(reward_ave)
                 system_ave_bitrate_history.append(system_bitrate_ave)
                 print('i_loop =', i_loop, 'i_episode =',i_episode, 'reward =',reward_ave, 'system_bitrate =',system_bitrate_ave)
+
+        if i_episode % 50 == 0 and i_loop%2 == 0:
+            dataframe=pd.DataFrame({'bitrate':actor_loss_history_s})
+            dataframe.to_csv("./result/TD3_actor_loss_sinr_mix_s_loop"+str(i_loop)+"_epis"+str(i_episode)+".csv", index=False,sep=',')
+            dataframe=pd.DataFrame({'bitrate':critic_loss_history_s})
+            dataframe.to_csv("./result/TD3_critic_loss_sinr_mix_s_loop"+str(i_loop)+"_epis"+str(i_episode)+".csv", index=False,sep=',')
+            dataframe=pd.DataFrame({'bitrate':actor_loss_history_m})
+            dataframe.to_csv("./result/TD3_actor_loss_sinr_mix_m_loop"+str(i_loop)+"_epis"+str(i_episode)+".csv", index=False,sep=',')
+            dataframe=pd.DataFrame({'bitrate':critic_loss_history_m})
+            dataframe.to_csv("./result/TD3_critic_loss_sinr_mix_m_loop"+str(i_loop)+"_epis"+str(i_episode)+".csv", index=False,sep=',')
+
+    dataframe=pd.DataFrame({'bitrate':system_ave_bitrate_history})
+    dataframe.to_csv("./result/TD3_bitrate_sinr_mix_"+str(i_loop)+".csv", index=False,sep=',')
