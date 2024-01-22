@@ -94,9 +94,9 @@ for i_loop in range(6):
         
         if i_episode % 50 == 0 and i_loop%2 == 0:
             dataframe=pd.DataFrame({'bitrate':actor_loss_history})
-            dataframe.to_csv("./result/TD3_actor_loss_sinr_single_global_loop"+str(i_loop)+"_epis"+str(i_episode)+".csv", index=False,sep=',')
+            dataframe.to_csv("./result/TD3_actor_loss_sinr_single_global_6000_loop"+str(i_loop)+"_epis"+str(i_episode)+".csv", index=False,sep=',')
             dataframe=pd.DataFrame({'bitrate':critic_loss_history})
-            dataframe.to_csv("./result/TD3_critic_loss_sinr_single_global_loop"+str(i_loop)+"_epis"+str(i_episode)+".csv", index=False,sep=',')
+            dataframe.to_csv("./result/TD3_critic_loss_sinr_single_global_6000_loop"+str(i_loop)+"_epis"+str(i_episode)+".csv", index=False,sep=',')
 
     dataframe=pd.DataFrame({'bitrate':system_ave_bitrate_history})
-    dataframe.to_csv("./result/TD3_bitrate_sinr_single_global_agent_"+str(i_loop)+".csv", index=False,sep=',')
+    dataframe.to_csv("./result/TD3_bitrate_sinr_single_global_agent_6000_"+str(i_loop)+".csv", index=False,sep=',')
